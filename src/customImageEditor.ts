@@ -18,6 +18,8 @@ class ImageViewerDocument implements vscode.CustomDocument {
   dispose() {}
 }
 
+type ViewerMode = 'fit' | 'native'
+
 type ViewerImageBootstrap = {
   fsPath: string
   src: string
@@ -28,7 +30,10 @@ type ViewerImageBootstrap = {
 type ImageViewerBootstrap = {
   images: ViewerImageBootstrap[]
   defaultIndex: number
+  initialMode: ViewerMode
 }
+
+const VIEW_MODE_STATE_KEY = `${IMAGE_EDITOR_VIEW_TYPE}.viewMode`
 
 const SUPPORTED_IMAGE_EXTENSIONS = new Set(
   IMAGE_FILE_PATTERNS.map((pattern) => pattern.slice(1).toLowerCase())
@@ -89,7 +94,8 @@ function listSiblingImages(selectedUri: vscode.Uri): string[] {
 
 function createViewerBootstrap(
   webview: vscode.Webview,
-  documentUri: vscode.Uri
+  documentUri: vscode.Uri,
+  initialMode: ViewerMode
 ): ImageViewerBootstrap {
   const imagePaths = listSiblingImages(documentUri)
   const selectedKey = normalizeFsPath(documentUri.fsPath)
@@ -105,7 +111,8 @@ function createViewerBootstrap(
 
   return {
     images,
-    defaultIndex: selectedIndex >= 0 ? selectedIndex : 0
+    defaultIndex: selectedIndex >= 0 ? selectedIndex : 0,
+    initialMode
   }
 }
 
@@ -153,7 +160,9 @@ class ImageViewerEditorProvider implements vscode.CustomReadonlyEditorProvider<I
   ): void {
     const distRoot = vscode.Uri.joinPath(this.context.extensionUri, DIST_WEBVIEW_PATH)
     const documentFolder = vscode.Uri.file(path.dirname(document.uri.fsPath))
-    const bootstrap = createViewerBootstrap(webviewPanel.webview, document.uri)
+    const savedMode = this.context.globalState.get<ViewerMode>(VIEW_MODE_STATE_KEY)
+    const initialMode: ViewerMode = savedMode === 'fit' ? 'fit' : 'native'
+    const bootstrap = createViewerBootstrap(webviewPanel.webview, document.uri, initialMode)
     const allowedImages = new Map(
       bootstrap.images.map((image) => [normalizeFsPath(image.fsPath), image])
     )
@@ -172,6 +181,14 @@ class ImageViewerEditorProvider implements vscode.CustomReadonlyEditorProvider<I
     const messageSubscription = webviewPanel.webview.onDidReceiveMessage((message) => {
       if (message?.cmd === MESSAGE_CMD.CLOSE_CUSTOM_IMAGE_EDITOR) {
         webviewPanel.dispose()
+        return
+      }
+
+      if (message?.cmd === MESSAGE_CMD.SAVE_VIEW_MODE) {
+        const mode = message?.data?.mode
+        if (mode === 'fit' || mode === 'native') {
+          void this.context.globalState.update(VIEW_MODE_STATE_KEY, mode)
+        }
         return
       }
 
