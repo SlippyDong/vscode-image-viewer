@@ -1,0 +1,13 @@
+/* right-image-preview 0.2.0 does not expose a showRotate flag.
+   Hide only the two rotation actions and their trailing divider. */
+[role='toolbar'] > button[aria-label='Rotate 90° counter-clockwise'],
+[role='toolbar'] > button[aria-label='Rotate 90° clockwise'],
+[role='toolbar'] > button[aria-label='逆时针旋转 90°'],
+[role='toolbar'] > button[aria-label='顺时针旋转 90°'] {
+  display: none !important;
+}
+
+[role='toolbar'] > button[aria-label='Rotate 90° clockwise'] + div,
+[role='toolbar'] > button[aria-label='顺时针旋转 90°'] + div {
+  display: none !important;
+}

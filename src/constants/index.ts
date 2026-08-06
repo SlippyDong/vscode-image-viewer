@@ -24,6 +24,8 @@ export const MESSAGE_CMD = {
   OPEN_EXTERNAL_URI: 'openExternalUri',
   /** Close the custom-editor tab when the direct image viewer is dismissed. */
   CLOSE_CUSTOM_IMAGE_EDITOR: 'closeCustomImageEditor',
+  /** Reveal the active sibling image in Explorer while navigating the viewer. */
+  REVEAL_IMAGE_IN_EXPLORER: 'revealImageInExplorer',
 }
 
 export const EXTENSION_NAME = 'vscode-infra'

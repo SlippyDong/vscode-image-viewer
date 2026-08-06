@@ -2,7 +2,7 @@
   "name": "image-viewer",
   "publisher": "vscode-infra",
   "displayName": "Image Viewer",
-  "description": "Browse images in your project: thumbnail grid, lightbox preview, copy path or Base64. Works well for large folders (columns layout, lazy loading). Light or dark UI; scan one folder from Explorer or the whole workspace.",
+  "description": "Open image files in a focused VS Code viewer with zoom, fit, minimap, folder navigation, dimensions, and Explorer synchronization.",
   "icon": "assets/logo.png",
   "version": "2.0.5",
   "author": "Zhang Jian <zhangjian1713@gmail.com>",
@@ -17,29 +17,23 @@
   ],
   "keywords": [
     "image",
-    "images",
-    "gallery",
-    "thumbnail",
+    "viewer",
     "preview",
-    "folder",
-    "columns",
-    "base64",
+    "zoom",
     "svg",
     "png",
     "jpg",
+    "jpeg",
     "webp",
-    "img",
-    "pic",
-    "photos"
+    "gif",
+    "bmp",
+    "tiff",
+    "avif"
   ],
   "main": "./dist/extension.js",
   "webviewVendorTemplate": "antd-less",
   "contributes": {
     "commands": [
-      {
-        "command": "vscode-infra.webviewImageViewer",
-        "title": "View Images 🌄"
-      },
       {
         "command": "vscode-infra.setAsDefaultImageViewer",
         "title": "Use as Default Image Editor",
@@ -71,22 +65,7 @@
         ],
         "priority": "option"
       }
-    ],
-    "menus": {
-      "editor/context": [
-        {
-          "when": "editorFocus",
-          "command": "vscode-infra.webviewImageViewer",
-          "group": "z_commands"
-        }
-      ],
-      "explorer/context": [
-        {
-          "command": "vscode-infra.webviewImageViewer",
-          "group": "z_commands"
-        }
-      ]
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",

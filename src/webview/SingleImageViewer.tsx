@@ -1,52 +1,93 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import { ImagePreview } from 'right-image-preview'
-import type { ImageGroup } from 'right-image-preview'
+import type { ImageItem } from 'right-image-preview'
 import { callVscode } from '@easy_vscode/webview'
 import { MESSAGE_CMD } from '../constants'
+import './SingleImageViewer.css'
 
-type SingleImageViewerArgs = {
-  src?: string
-  name?: string
+type ViewerImage = {
+  fsPath: string
+  src: string
+  name: string
+  alt: string
 }
 
-function readSingleImageViewerArgs(): SingleImageViewerArgs {
+type ImageViewerArgs = {
+  images: ViewerImage[]
+  defaultIndex: number
+}
+
+function readImageViewerArgs(): ImageViewerArgs {
   if (typeof window === 'undefined') {
-    return {}
+    return { images: [], defaultIndex: 0 }
   }
+
   const args = (window as Window & { commandArgs?: unknown[] }).commandArgs?.[0]
   if (!args || typeof args !== 'object') {
-    return {}
+    return { images: [], defaultIndex: 0 }
   }
-  const value = args as SingleImageViewerArgs
-  return {
-    src: typeof value.src === 'string' ? value.src : undefined,
-    name: typeof value.name === 'string' ? value.name : undefined
-  }
+
+  const value = args as { images?: unknown; defaultIndex?: unknown }
+  const images = Array.isArray(value.images)
+    ? value.images.filter((item): item is ViewerImage => {
+      if (!item || typeof item !== 'object') {
+        return false
+      }
+      const image = item as Partial<ViewerImage>
+      return (
+        typeof image.fsPath === 'string' &&
+        typeof image.src === 'string' &&
+        typeof image.name === 'string' &&
+        typeof image.alt === 'string'
+      )
+    })
+    : []
+
+  const requestedIndex =
+    typeof value.defaultIndex === 'number' && Number.isInteger(value.defaultIndex)
+      ? value.defaultIndex
+      : 0
+  const defaultIndex =
+    images.length > 0
+      ? Math.min(Math.max(requestedIndex, 0), images.length - 1)
+      : 0
+
+  return { images, defaultIndex }
 }
 
 const SingleImageViewer: React.FC = () => {
-  const { src, name } = readSingleImageViewerArgs()
-  const groupedImages = useMemo<ImageGroup[] | undefined>(() => {
-    if (!src) {
-      return undefined
-    }
-    const imageName = name || 'Image'
-    return [
-      {
-        name: '',
-        images: [
-          {
-            id: src,
-            src,
-            name: imageName,
-            alt: imageName
-          }
-        ]
-      }
-    ]
-  }, [src, name])
+  const { images, defaultIndex } = useMemo(readImageViewerArgs, [])
+  const lastIndexRef = useRef(defaultIndex)
+  const previewImages = useMemo<ImageItem[]>(
+    () =>
+      images.map((image) => ({
+        id: image.fsPath,
+        src: image.src,
+        name: image.name,
+        alt: image.alt
+      })),
+    [images]
+  )
 
-  if (!groupedImages) {
+  const handleIndexChange = useCallback(
+    (index: number) => {
+      if (index === lastIndexRef.current) {
+        return
+      }
+      lastIndexRef.current = index
+
+      const image = images[index]
+      if (image) {
+        callVscode({
+          cmd: MESSAGE_CMD.REVEAL_IMAGE_IN_EXPLORER,
+          data: { fsPath: image.fsPath }
+        })
+      }
+    },
+    [images]
+  )
+
+  if (previewImages.length === 0) {
     return (
       <div style={{ padding: 20, color: 'var(--vscode-errorForeground)' }}>
         Unable to open this image.
@@ -56,14 +97,14 @@ const SingleImageViewer: React.FC = () => {
 
   return (
     <ImagePreview
-      groupedImages={groupedImages}
+      images={previewImages}
       visible
-      defaultIndex={0}
+      defaultIndex={defaultIndex}
       wheelEnabled
       doubleClickEnabled
       closeOnMaskClick
-      arrows='side'
-      showFlip
+      arrows='both'
+      onIndexChange={handleIndexChange}
       onClose={() => callVscode({ cmd: MESSAGE_CMD.CLOSE_CUSTOM_IMAGE_EDITOR })}
     />
   )

@@ -1,44 +1,36 @@
 # Image Viewer
 
-View and manage images in your workspace: thumbnail grid, large preview, copy Base64 / path / file name, and per-project include/exclude folders.
-
-## Screenshots
-
-### Main panel
-
-![Image Viewer main panel — folder group preview in dark theme](https://public-img-1253867148.cos.ap-singapore.myqcloud.com/img-in-docs/dark%20theme%2C%20big%20pictures.png)
-
-![Image Viewer main panel — image preview in dark theme](https://public-img-1253867148.cos.ap-singapore.myqcloud.com/img-in-docs/dark%20theme%2C%20big%20pictures%20-%20view.jpg)
-
-This shows another light theme style, as well as switching to a checkerboard background to reveal the transparent parts of SVG images.
-![Image Viewer main panel — SVG with transparent background in light theme](https://public-img-1253867148.cos.ap-singapore.myqcloud.com/img-in-docs/light%20theme%EF%BC%8Csvg%20icons.png)
+A focused image viewer for VS Code and Cursor. Open an image from Explorer to view it directly without loading an image library or gallery first.
 
 ## Features
 
-- The full-screen viewer is now powered by our own preview engine, with a smoother browsing experience.
-- Moving to next/previous images now feels more natural and follows the folder order you see in the panel.
-- The small overview map in preview looks clearer and loads faster, especially for very large images.
-- Preview interactions are richer and easier to use (mouse wheel zoom, double-click zoom, quick flip, and easier navigation buttons).
-- Thumbnail grid with **lazy loading** and tuning for large libraries (many high-resolution images).
-- **Column count** controls grid density (uses panel width efficiently).
-- **Sort** images inside each folder (name, modified time, size, asc/desc).
-- **Light / dark** UI for the panel; default follows your VS Code or Cursor theme (toggle in the toolbar).
-- Preview backdrops: **checkerboard**, **transparent** (default), and solid swatches; useful for PNG/SVG with alpha.
-- Zoom and navigate with keyboard.
-- **Search** by path/name; filter by **file type**.
-- **Include / exclude** folders
-- **Copy** path, file name, or Base64 from the image menu.
-- Open a folder from Explorer: **only that folder tree** is scanned (fast in huge repos). **Multiple** Image Viewer tabs for different folders; tab title includes the folder name.
-- Optionally register Image Viewer as the default editor so clicking an image in Explorer opens it directly in the full-screen viewer without loading the image library first.
+- Registers as an optional read-only editor for supported image files.
+- Opens the selected image directly in the full-screen viewer.
+- Shows the file name and dimensions, for example `image.png - 1630 x 1152px`.
+- Previous/next navigation moves through supported images in the same folder.
+- Navigating updates the selected file in Explorer and keeps focus on the viewer.
+- Mouse-wheel zoom, double-click zoom, fit-to-window, 1:1 view, zoom presets and minimap navigation.
+- Rotation and mirror controls are intentionally omitted from the bottom toolbar.
+- No image-library command, thumbnail grid, folder context menu or file context menu.
 
-## How to use
+## Setup
 
-1. Open a folder or workspace in VS Code / Cursor.
-2. **Whole workspace:** `Ctrl+Shift+P` / `⌘⇧P` → run **View Images** (command id: `vscode-infra.webviewImageViewer`).
-3. **Folder only:** In the **Explorer**, right-click a **folder** (or an image file) → **View Images 🌄**. Only that directory (and subfolders) is indexed in that panel; the editor tab title reflects the folder.
-4. **Open images on a normal click:** run **Image Viewer: Use as Default Image Editor** once. Run **Image Viewer: Restore VS Code's Default Image Editor** to undo the association.
+1. Install the extension.
+2. Open the Command Palette with `Ctrl+Shift+P` / `⌘⇧P`.
+3. Run **Image Viewer: Use as Default Image Editor**.
+4. Click a supported image in Explorer.
 
-You can also switch editors for an individual file with VS Code's **Reopen Editor With...** command.
+Run **Image Viewer: Restore VS Code's Default Image Editor** to remove the global file associations.
+
+You can also use **Reopen Editor With...** to select Image Viewer for an individual file.
+
+## Supported formats
+
+SVG, PNG, JPEG/JPG, ICO, GIF, WebP, BMP, TIFF, APNG and AVIF.
+
+## Navigation
+
+Images are ordered by file name using natural numeric sorting. When the viewer moves to another image, the corresponding file is revealed and selected in Explorer.
 
 ## More documentation
 
