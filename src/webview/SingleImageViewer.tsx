@@ -100,6 +100,8 @@ const SingleImageViewer: React.FC = () => {
       images={previewImages}
       visible
       defaultIndex={defaultIndex}
+      initialMode='native'
+      initialNativePercent={100}
       wheelEnabled
       doubleClickEnabled
       closeOnMaskClick
