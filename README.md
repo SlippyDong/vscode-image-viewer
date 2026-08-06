@@ -10,6 +10,7 @@ A focused image viewer for VS Code and Cursor. Open an image from Explorer to vi
 - Previous/next navigation moves through supported images in the same folder.
 - Navigating updates the selected file in Explorer and keeps focus on the viewer.
 - Mouse-wheel zoom, double-click zoom, fit-to-window, 1:1 view, zoom presets and minimap navigation.
+- Remembers whether **Fit to viewport** or **Original size (100%)** was last selected and applies it to image navigation and future viewer tabs.
 - Rotation and mirror controls are intentionally omitted from the bottom toolbar.
 - No image-library command, thumbnail grid, folder context menu or file context menu.
 
