@@ -26,6 +26,8 @@ export const MESSAGE_CMD = {
   CLOSE_CUSTOM_IMAGE_EDITOR: 'closeCustomImageEditor',
   /** Reveal the active sibling image in Explorer while navigating the viewer. */
   REVEAL_IMAGE_IN_EXPLORER: 'revealImageInExplorer',
+  /** Persist Fit versus Original size as the default for future image editors. */
+  SAVE_VIEW_MODE: 'saveViewMode',
 }
 
 export const EXTENSION_NAME = 'vscode-infra'
